@@ -86,16 +86,31 @@ modalCloses.forEach((modalClose) => {
 });
 
 /*======================= Portfolio Swiper ===================*/
-var swiper = new Swiper(".portfolio__container", {
+var portfolioSwiper = new Swiper(".portfolio__container", {
   cssMode: true,
   loop: true,
 
   navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
+    nextEl: ".portfolio__container .swiper-button-next",
+    prevEl: ".portfolio__container .swiper-button-prev",
   },
   pagination: {
-    el: ".swiper-pagination",
+    el: ".portfolio__container .swiper-pagination",
+    clickable: true,
+  },
+});
+
+/*======================= Shopify Stores Swiper ===================*/
+var shopifySwiper = new Swiper(".shopify__container", {
+  cssMode: true,
+  loop: true,
+
+  navigation: {
+    nextEl: ".shopify__container .swiper-button-next",
+    prevEl: ".shopify__container .swiper-button-prev",
+  },
+  pagination: {
+    el: ".shopify__container .swiper-pagination",
     clickable: true,
   },
 });
