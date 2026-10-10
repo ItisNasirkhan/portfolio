@@ -1,891 +1,2159 @@
 <!doctype html>
+
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>My Portfolio</title>
+    <link href="assets/swiper-bundle.min.css" rel="stylesheet" />
+    <link href="assets/newcss.css" rel="stylesheet" />
+    <link
+      href="https://unicons.iconscout.com/release/v4.0.8/css/line.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Full-bleed, seamlessly looping reel marquee */
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Portfolio</title>
-  <link rel="stylesheet" href="assets/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="assets/newcss.css" />
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
-</head>
+      .reels {
+        overflow: hidden;
+      }
 
-<body oncontextmenu="return false">
-  <header class="header" id="header">
-    <nav class="nav container">
-      <a href="#" class="nav__logo">Nasir khan</a>
-      <div class="nav__menu" id="nav-menu">
-        <ul class="nav__list grid">
-          <li class="nav__item">
-            <a href="#home" class="nav__link active-link">
-              <i class="uil uil-estate nav__icon"></i>Home
-            </a>
-          </li>
-          <li class="nav__item">
-            <a href="#about" class="nav__link">
-              <i class="uil uil-user nav__icon"></i>About
-            </a>
-          </li>
-          <li class="nav__item">
-            <a href="#skills" class="nav__link">
-              <i class="uil uil-file-alt nav__icon"></i>Skills
-            </a>
-          </li>
-          <li class="nav__item">
-            <a href="#qualification" class="nav__link">
-              <i class="uil uil-briefcase-alt nav__icon"></i>Qualification
-            </a>
-          </li>
-          <li class="nav__item">
-            <a href="#portfolio" class="nav__link">
-              <i class="uil uil-scenery nav__icon"></i>Projects
-            </a>
-          </li>
-          <li class="nav__item">
-            <a href="#contact" class="nav__link">
-              <i class="uil uil-message nav__icon"></i>Contact-Me
-            </a>
-          </li>
-        </ul>
-        <i class="uil uil-times nav__close" id="nav-close"></i>
-      </div>
-      <div class="nav__btns">
-        <!-- Theme change button -->
-        <i class="uil uil-moon change-theme" id="theme-button"></i>
+      .reels__shell {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+      }
 
-        <div class="nav__toggle" id="nav-toggle">
-          <i class="uil uil-apps"></i>
+      .reels__shell::before,
+      .reels__shell::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: clamp(18px, 4vw, 85px);
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .reels__shell::before {
+        left: 0;
+        background: linear-gradient(
+          to right,
+          var(--body-color, #fafafa),
+          transparent
+        );
+      }
+
+      .reels__shell::after {
+        right: 0;
+        background: linear-gradient(
+          to left,
+          var(--body-color, #fafafa),
+          transparent
+        );
+      }
+
+      .reels__track {
+        display: flex;
+        width: max-content;
+        gap: 16px;
+        padding: 12px 0 22px;
+        will-change: transform;
+      }
+
+      .reel__card {
+        position: relative;
+        flex: 0 0 clamp(135px, 12.5vw, 170px);
+        aspect-ratio: 9 / 16;
+        border-radius: 1rem;
+        overflow: hidden;
+        isolation: isolate;
+        background: #17171c;
+        cursor: pointer;
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .reel__card:hover,
+      .reel__card:focus-visible {
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.23);
+      }
+
+      .reel__card:focus-visible {
+        outline: 3px solid var(--first-color, #6656d9);
+        outline-offset: 2px;
+      }
+
+      .reel__video {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .reel__card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.83),
+          transparent 53%
+        );
+      }
+
+      .reel__play {
+        position: absolute;
+        z-index: 2;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: white;
+        font-size: 2rem;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+      }
+
+      .reel__card.is-playing .reel__play {
+        opacity: 0;
+      }
+
+      .reel__info {
+        position: absolute;
+        z-index: 2;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.75rem;
+        color: white;
+        pointer-events: none;
+      }
+
+      .reel__info h3 {
+        font-size: 0.79rem;
+        line-height: 1.28;
+        font-weight: 600;
+        color: white;
+        margin-top: 0.23rem;
+      }
+
+      .reel__category {
+        font-size: 0.58rem;
+        text-transform: uppercase;
+        letter-spacing: 0.055em;
+        opacity: 0.9;
+      }
+
+      @media (max-width: 480px) {
+        .reels__track {
+          gap: 12px;
+        }
+        .reel__card {
+          flex-basis: 125px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reels__track {
+          will-change: auto;
+        }
+        .reel__card {
+          transition: none;
+        }
+      }
+
+      /* Full-width single-row looping skills marquee */
+
+      .skills {
+        overflow: hidden;
+      }
+
+      .skills-marquee {
+        width: 100%;
+        max-width: none;
+        position: relative;
+        overflow: hidden;
+        padding: 1.15rem 0 1.75rem;
+      }
+
+      .skills-marquee::before,
+      .skills-marquee::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: clamp(20px, 5vw, 90px);
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .skills-marquee::before {
+        left: 0;
+        background: linear-gradient(
+          to right,
+          var(--body-color, #fafafa),
+          transparent
+        );
+      }
+
+      .skills-marquee::after {
+        right: 0;
+        background: linear-gradient(
+          to left,
+          var(--body-color, #fafafa),
+          transparent
+        );
+      }
+
+      .skills-marquee__track {
+        display: flex;
+        width: max-content;
+        animation: skillsGlide 34s linear infinite;
+        will-change: transform;
+      }
+
+      .skills-marquee:hover .skills-marquee__track,
+      .skills-marquee:focus-within .skills-marquee__track {
+        animation-play-state: paused;
+      }
+
+      .skills-marquee__group {
+        display: flex;
+        flex: none;
+        gap: 20px;
+        padding-right: 20px;
+      }
+
+      .skill-tile {
+        flex: 0 0 205px;
+        height: 190px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.2rem;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        background: var(--container-color, #fff);
+        border: 1px solid rgba(125, 125, 145, 0.2);
+        border-radius: 1.25rem;
+        box-shadow: 0 7px 28px rgba(25, 25, 55, 0.07);
+        transition:
+          border-color 0.25s,
+          box-shadow 0.25s;
+      }
+
+      .skill-tile:hover {
+        border-color: var(--first-color, #6656d9);
+        box-shadow: 0 14px 30px rgba(25, 25, 55, 0.16);
+      }
+
+      .skill-tile__icon {
+        display: grid;
+        place-items: center;
+        width: 4.2rem;
+        height: 4.2rem;
+        flex-shrink: 0;
+        border-radius: 1.1rem;
+        background: var(--first-color-lighter, #b8b4ff);
+        color: var(--first-color, #6157e9);
+      }
+
+      .skill-tile__icon svg {
+        width: 2.2rem;
+        height: 2.2rem;
+        display: block;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .skill-tile__name {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--title-color, #222);
+      }
+
+      .skill-tile__ae {
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+      }
+
+      @keyframes skillsGlide {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .skills-marquee__group {
+          gap: 14px;
+          padding-right: 14px;
+        }
+        .skill-tile {
+          flex-basis: 172px;
+          height: 168px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .skills-marquee__track {
+          animation: none;
+        }
+        .skills-marquee {
+          overflow-x: auto;
+        }
+      }
+
+      /* Layout guard: marquee tracks never increase the page width. */
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        overflow-x: clip;
+      }
+      .main {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: clip;
+      }
+      #skills,
+      #reels {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+      }
+      #skills .skills-marquee,
+      #reels .reels__shell {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        margin-inline: 0;
+      }
+      #skills .skills-marquee__track,
+      #reels .reels__track {
+        max-width: none;
+      }
+      /* Conventional sections remain centered; the two marquees span the viewport. */
+      @supports not (overflow: clip) {
+        html,
+        body,
+        .main {
+          overflow-x: hidden;
+        }
+      }
+
+      /* Wide, consistent site layout. Previous .container max-width was too narrow. */
+      :root {
+        --site-content-width: 1200px;
+        --site-gutter: clamp(18px, 3vw, 44px);
+      }
+      .container {
+        width: min(
+          var(--site-content-width),
+          calc(100% - 2 * var(--site-gutter))
+        ) !important;
+        max-width: none !important;
+        margin-inline: auto !important;
+      }
+      /* Let the three-column hero occupy the wider available space. */
+      @media (min-width: 992px) {
+        .home__container {
+          width: min(1200px, calc(100% - 2 * var(--site-gutter))) !important;
+        }
+        .home__content {
+          width: 100%;
+          grid-template-columns: 48px minmax(0, 1.15fr) minmax(0, 0.95fr) !important;
+          column-gap: clamp(22px, 3.5vw, 68px) !important;
+          align-items: center;
+        }
+        .home__social {
+          grid-column: 1 !important;
+          grid-row: 1 !important;
+        }
+        .home__data {
+          grid-column: 2 !important;
+          grid-row: 1 !important;
+          min-width: 0;
+        }
+        .home__img {
+          grid-column: 3 !important;
+          grid-row: 1 !important;
+          min-width: 0;
+          justify-self: center;
+        }
+        .home__blob {
+          width: min(100%, 390px);
+        }
+      }
+      /* Keep smaller devices at their established responsive layout. */
+      @media (max-width: 767px) {
+        :root {
+          --site-gutter: 18px;
+        }
+      }
+
+      /* Project and Shopify card grids: all projects visible, no carousel */
+      #portfolio .project-cards-grid,
+      #shopify-stores .project-cards-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(18px, 2.3vw, 28px);
+        align-items: stretch;
+        margin-top: 2rem !important;
+      }
+      #portfolio .project-card,
+      #shopify-stores .project-card {
+        display: flex !important;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        border: 1px solid rgba(125, 125, 145, 0.16);
+        border-radius: 1.1rem;
+        overflow: hidden;
+        background: var(--container-color, #fff);
+        box-shadow: 0 6px 24px rgba(30, 30, 70, 0.06);
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease,
+          border-color 0.25s ease;
+      }
+      #portfolio .project-card:hover,
+      #shopify-stores .project-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--first-color, #6157e9);
+        box-shadow: 0 15px 36px rgba(30, 30, 70, 0.14);
+      }
+      .project-card__visual {
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background: var(--input-color, #eee);
+        width: 100%;
+      }
+      .project-card__image {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        object-fit: cover;
+        border-radius: 0 !important;
+        transition: transform 0.4s ease;
+      }
+      .project-card:hover .project-card__image {
+        transform: scale(1.045);
+      }
+      .project-card__body {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+        flex: 1;
+        padding: 1.3rem;
+        min-width: 0;
+      }
+      .project-card__title {
+        color: var(--title-color);
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+      }
+      .project-card__description {
+        color: var(--text-color);
+        font-size: 0.88rem;
+        line-height: 1.65;
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+      .project-card__link {
+        margin-top: auto;
+      }
+      @media (max-width: 1000px) {
+        #portfolio .project-cards-grid,
+        #shopify-stores .project-cards-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 600px) {
+        #portfolio .project-cards-grid,
+        #shopify-stores .project-cards-grid {
+          grid-template-columns: 1fr;
+        }
+        .project-card__body {
+          padding: 1.15rem;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .project-card,
+        .project-card__image {
+          transition: none !important;
+        }
+      }
+    </style>
+    <style>
+      /* Development projects only: equal-sized cards and concise highlights. */
+      #portfolio .project-cards-grid {
+        grid-auto-rows: 1fr;
+      }
+      #portfolio .project-card {
+        height: 100%;
+      }
+      #portfolio .project-card__body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      #portfolio .project-card__highlights {
+        list-style: disc;
+        padding-left: 1.15rem;
+        margin: 0 0 1rem;
+        color: var(--text-color);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      #portfolio .project-card__highlights li {
+        margin-bottom: 0.38rem;
+        padding-left: 0.1rem;
+      }
+      #portfolio .project-card__link {
+        margin-top: auto;
+      }
+    </style>
+  </head>
+  <body oncontextmenu="return false;">
+    <header class="header" id="header">
+      <nav class="nav container">
+        <a class="nav__logo" href="#">Nasir khan</a>
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list grid">
+            <li class="nav__item">
+              <a class="nav__link active-link" href="#home">
+                <i class="uil uil-estate nav__icon"></i>Home
+              </a>
+            </li>
+            <li class="nav__item">
+              <a class="nav__link" href="#about">
+                <i class="uil uil-user nav__icon"></i>About
+              </a>
+            </li>
+            <li class="nav__item">
+              <a class="nav__link" href="#skills">
+                <i class="uil uil-file-alt nav__icon"></i>Skills
+              </a>
+            </li>
+            <li class="nav__item">
+              <a class="nav__link" href="#qualification">
+                <i class="uil uil-briefcase-alt nav__icon"></i>Qualification
+              </a>
+            </li>
+            <li class="nav__item">
+              <a class="nav__link" href="#portfolio">
+                <i class="uil uil-scenery nav__icon"></i>Projects
+              </a>
+            </li>
+            <li class="nav__item">
+              <a class="nav__link" href="#contact">
+                <i class="uil uil-message nav__icon"></i>Contact-Me
+              </a>
+            </li>
+          </ul>
+          <i class="uil uil-times nav__close" id="nav-close"></i>
         </div>
-      </div>
-    </nav>
-  </header>
-  <!-- main-->
-
-  <main class="main">
-    <!--========================= Home =====================-->
-
-    <section class="home section" id="home">
-      <div class="home__container container grid">
-        <div class="home__content grid">
-          <div class="home__social">
-            <a href="https://www.linkedin.com/in/nasir-khan-a16a762b5" target="_blank" class="home__social-icon">
-              <i class="uil uil-linkedin-alt home__icon"></i>
-            </a>
-
-            <a href="https://github.com/ItisNasirkhan" target="_blank" class="home__social-icon">
-              <i class="uil uil-github-alt home__icon"></i>
-            </a>
+        <div class="nav__btns">
+          <!-- Theme change button -->
+          <i class="uil uil-moon change-theme" id="theme-button"></i>
+          <div class="nav__toggle" id="nav-toggle">
+            <i class="uil uil-apps"></i>
           </div>
-          <div class="home__img">
-            <svg class="home__blob" viewBox="0 0 200 187" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <mask id="mask0" mask-type="alpha">
-                <path d="M190.312 36.4879C206.582 62.1187 201.309 102.826 182.328 134.186C163.346 165.547 
+        </div>
+      </nav>
+    </header>
+    <!-- main-->
+    <main class="main">
+      <!--========================= Home =====================-->
+      <section class="home section" id="home">
+        <div class="home__container container grid">
+          <div class="home__content grid">
+            <div class="home__social">
+              <a
+                class="home__social-icon"
+                href="https://www.linkedin.com/in/nasir-khan-a16a762b5"
+                target="_blank"
+              >
+                <i class="uil uil-linkedin-alt home__icon"></i>
+              </a>
+              <a
+                class="home__social-icon"
+                href="https://github.com/ItisNasirkhan"
+                target="_blank"
+              >
+                <i class="uil uil-github-alt home__icon"></i>
+              </a>
+            </div>
+            <div class="home__img">
+              <svg
+                class="home__blob"
+                viewbox="0 0 200 187"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <mask id="mask0" mask-type="alpha">
+                  <path
+                    d="M190.312 36.4879C206.582 62.1187 201.309 102.826 182.328 134.186C163.346 165.547 
+
+
+
                       130.807 187.559 100.226 186.353C69.6454 185.297 41.0228 161.023 21.7403 129.362C2.45775 
+
+
+
                       97.8511 -7.48481 59.1033 6.67581 34.5279C20.9871 10.1032 59.7028 -0.149132 97.9666 
-                      0.00163737C136.23 0.303176 174.193 10.857 190.312 36.4879Z" />
-              </mask>
-              <g mask="url(#mask0)">
-                <path d="M190.312 36.4879C206.582 62.1187 201.309 102.826 182.328 134.186C163.346 
+
+
+
+                      0.00163737C136.23 0.303176 174.193 10.857 190.312 36.4879Z"
+                  ></path>
+                </mask>
+                <g mask="url(#mask0)">
+                  <path
+                    d="M190.312 36.4879C206.582 62.1187 201.309 102.826 182.328 134.186C163.346 
+
+
+
                       165.547 130.807 187.559 100.226 186.353C69.6454 185.297 41.0228 161.023 21.7403 
+
+
+
                       129.362C2.45775 97.8511 -7.48481 59.1033 6.67581 34.5279C20.9871 10.1032 59.7028 
-                     -0.149132 97.9666 0.00163737C136.23 0.303176 174.193 10.857 190.312 36.4879Z" />
-                <image class="home__blob-img" x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid slice"
-                  xlink:href="assets/img/dp2.png" />
-              </g>
-            </svg>
+
+
+
+                     -0.149132 97.9666 0.00163737C136.23 0.303176 174.193 10.857 190.312 36.4879Z"
+                  ></path>
+                  <image
+                    class="home__blob-img"
+                    height="200"
+                    preserveaspectratio="xMidYMid slice"
+                    width="200"
+                    x="0"
+                    xlink:href="assets/img/dp2.png"
+                    y="0"
+                  />
+                </g>
+              </svg>
+            </div>
+            <div class="home__data">
+              <h1 class="home__title">Hi, I'm Nasir khan</h1>
+              <h3 class="home__subtitle">
+                Web Developer | Shopify Developer | Video Editor & Digital
+                Solutions Specialist
+              </h3>
+              <p class="home__description">
+                A Computer Science graduate from
+
+                <strong>SZABIST University</strong>, Karachi. A passionate Web
+                Developer, Video Editor, and Digital Solutions Specialist,
+                transforming ideas into engaging digital experiences.
+              </p>
+              <a class="button button--flex" href="#contact">
+                Contact me<i class="uil uil-message button__icon"></i>
+              </a>
+            </div>
           </div>
-          <div class="home__data">
-            <h1 class="home__title">Hi, I'm Nasir khan</h1>
-            <h3 class="home__subtitle">
-              MERN/PERN Stack Developer & Shopify Developer
-            </h3>
-            <p class="home__description">
-              An 8th-semester undergraduate engineering student at
-              <strong>Szabist University </strong>, Karachi.
+          <div class="home__scroll">
+            <a class="home__scroll-button button--flex" href="#about">
+              <i class="uil uil-mouse-alt home__scroll-mouse"></i>
+              <span class="home__scroll-name">Scroll down</span>
+              <i class="uil uil-arrow-down home__scroll-arrow"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+      <!--======================= About========================-->
+      <section class="about section" id="about">
+        <h2 class="section__title">About Me</h2>
+        <span class="section__subtitle">My introduction</span>
+        <div class="about__container container grid">
+          <img alt="" class="about__img" src="assets\img\dp1.png" />
+          <div class="about__data">
+            <p class="about__description">
+              I'm a Computer Science graduate from SZABIST University, Karachi,
+              with over two years of hands-on experience in Web Development,
+              Shopify Development, Video Editing, and Digital Solutions. I
+              specialize in building responsive websites, developing e-commerce
+              stores, and creating engaging visual content using modern
+              technologies like MERN/PERN Stack, React, Node.js, and Adobe After
+              Effects. I'm passionate about combining technology with creativity
+              to deliver innovative, user-friendly digital experiences. As a
+              self-motivated professional, I continuously explore new
+              technologies, improve my skills, and enjoy transforming creative
+              ideas into impactful digital solutions.
             </p>
-            <a href="#contact" class="button button--flex">
-              Contact me<i class="uil uil-message button__icon"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="home__scroll">
-          <a href="#about" class="home__scroll-button button--flex">
-            <i class="uil uil-mouse-alt home__scroll-mouse"></i>
-            <span class="home__scroll-name">Scroll down</span>
-            <i class="uil uil-arrow-down home__scroll-arrow"></i>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!--======================= About========================-->
-
-    <section class="about section" id="about">
-      <h2 class="section__title">About Me</h2>
-      <span class="section__subtitle">My introduction</span>
-
-      <div class="about__container container grid">
-        <img src="assets\img\dp1.png" alt="" class="about__img" />
-
-        <div class="about__data">
-          <p class="about__description">
-            I'm an 8th-semester CS undergraduate, passionate about technology and an avid reader. I have a
-            self-motivated
-            and can-do attitude, thriving in challenging and dynamic environments. Seeking a competitive position to
-            enhance my skills and contribute to a professional organization. I'm very much passionate to learn new stuff
-            that interests me and can help me to get better.
-          </p>
-
-          <div class="about__info">
-            <div>
-              <span class="about__info-title">3.1+</span>
-              <span class="about__info-name">Aggregate <br />CGPA</span>
-            </div>
-
-            <div>
-              <span class="about__info-title">06+</span>
-              <span class="about__info-name">
-                Projects</span>
-            </div>
-
-            <div>
-              <span class="about__info-title">02+</span>
-              <span class="about__info-name">YEAR <br />experience</span>
-            </div>
-          </div>
-
-          <div class="about__buttons">
-            <a href="assets/MyCV1.pdf" target="_blank" class="button button--flex">
-              Download CV<i class="fas fa-download button__icon"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!--===================== SKILLS =====================-->
-
-    <section class="skills section" id="skills">
-      <h2 class="section__title">Skills</h2>
-      <span class="section__subtitle">My technical level</span>
-
-      <div class="skills__container container grid">
-        <div>
-          <!--==================== Skill 1 =================-->
-          <div class="skills__content skills__open">
-            <div class="skills__header">
-              <i class="fas fa-pencil-ruler skills__icon"></i>
-
+            <div class="about__info">
               <div>
-                <h1 class="skills__title">Programming Languages</h1>
+                <span class="about__info-title">3.2+</span>
+                <span class="about__info-name">Aggregate <br />CGPA</span>
               </div>
-
-              <i class="uil uil-angle-down skills__arrow"></i>
-            </div>
-
-
-            <div class="skills__list grid">
-              <div class="skills__data">
-                <div class="skills__titles">
-                  <h3 class="skills__name">C</h3>
-                </div>
-
+              <div>
+                <span class="about__info-title">07+</span>
+                <span class="about__info-name"> Projects</span>
               </div>
-
-              <div class="skills__data">
-                <div class="skills__titles">
-                  <h3 class="skills__name">Java</h3>
-                </div>
-
-              </div>
-              <div class="skills__data">
-                <div class="skills__titles">
-                  <h3 class="skills__name">JavaScript</h3>
-                </div>
-
-
-
-
+              <div>
+                <span class="about__info-title">2.5+</span>
+                <span class="about__info-name">YEAR <br />experience</span>
               </div>
             </div>
+            <div class="about__buttons">
+              <a
+                class="button button--flex"
+                href="assets/MyCV1.pdf"
+                target="_blank"
+              >
+                Download CV<i class="fas fa-download button__icon"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--===================== SKILLS =====================-->
+      <section class="skills section" id="skills">
+        <h2 class="section__title">Skills &amp; Expertise</h2>
+        <span class="section__subtitle"
+          >Development, creativity and technical foundations</span
+        >
+        <div
+          aria-label="Skills: Web Development, Shopify Development, Video Editing, Python, After Effects, MERN/PERN Stack, Git"
+          class="skills-marquee"
+        >
+          <div class="skills-marquee__track">
+            <div class="skills-marquee__group">
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <rect height="16" rx="2" width="18" x="3" y="4"></rect>
+                    <path
+                      d="M3 9h18M8 14l-2 2 2 2m8-4 2 2-2 2m-4-6-2 8"
+                    ></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Web Development</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <path d="M5 8h14l1 13H4L5 8Z"></path>
+                    <path d="M9 10V6a3 3 0 0 1 6 0v4"></path>
+                    <path
+                      d="M12 13c-2-.5-3 0-3 1.2 0 2 5 1 5 3.5 0 1.6-2 2.1-4 1.5"
+                    ></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Shopify Development</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <rect height="14" rx="2" width="18" x="3" y="5"></rect>
+                    <path d="m10 9 6 3-6 3V9ZM3 9h4M3 15h4"></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Video Editing</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 3H8a4 4 0 0 0-4 4v3h8v2H5a3 3 0 0 0-3 3v2a4 4 0 0 0 4 4h3"
+                    ></path>
+                    <path
+                      d="M12 21h4a4 4 0 0 0 4-4v-3h-8v-2h7a3 3 0 0 0 3-3V7a4 4 0 0 0-4-4h-3"
+                    ></path>
+                    <circle
+                      cx="9"
+                      cy="6.7"
+                      fill="currentColor"
+                      r=".7"
+                      stroke="none"
+                    ></circle>
+                    <circle
+                      cx="15"
+                      cy="17.3"
+                      fill="currentColor"
+                      r=".7"
+                      stroke="none"
+                    ></circle></svg
+                ></span>
+                <h3 class="skill-tile__name">Python</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><span aria-hidden="true" class="skill-tile__ae"
+                    >Ae</span
+                  ></span
+                >
+                <h3 class="skill-tile__name">After Effects</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <ellipse cx="12" cy="12" rx="9" ry="3.5"></ellipse>
+                    <ellipse
+                      cx="12"
+                      cy="12"
+                      rx="9"
+                      ry="3.5"
+                      transform="rotate(60 12 12)"
+                    ></ellipse>
+                    <ellipse
+                      cx="12"
+                      cy="12"
+                      rx="9"
+                      ry="3.5"
+                      transform="rotate(120 12 12)"
+                    ></ellipse>
+                    <circle
+                      cx="12"
+                      cy="12"
+                      fill="currentColor"
+                      r="1.4"
+                      stroke="none"
+                    ></circle></svg
+                ></span>
+                <h3 class="skill-tile__name">MERN/PERN Stack</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <circle cx="7" cy="5" r="2"></circle>
+                    <circle cx="7" cy="19" r="2"></circle>
+                    <circle cx="17" cy="12" r="2"></circle>
+                    <path d="M7 7v10M7 10a4 4 0 0 0 4 4h4"></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Git</h3>
+              </div>
+            </div>
+            <div aria-hidden="true" class="skills-marquee__group">
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <rect height="16" rx="2" width="18" x="3" y="4"></rect>
+                    <path
+                      d="M3 9h18M8 14l-2 2 2 2m8-4 2 2-2 2m-4-6-2 8"
+                    ></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Web Development</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <path d="M5 8h14l1 13H4L5 8Z"></path>
+                    <path d="M9 10V6a3 3 0 0 1 6 0v4"></path>
+                    <path
+                      d="M12 13c-2-.5-3 0-3 1.2 0 2 5 1 5 3.5 0 1.6-2 2.1-4 1.5"
+                    ></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Shopify Development</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <rect height="14" rx="2" width="18" x="3" y="5"></rect>
+                    <path d="m10 9 6 3-6 3V9ZM3 9h4M3 15h4"></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Video Editing</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 3H8a4 4 0 0 0-4 4v3h8v2H5a3 3 0 0 0-3 3v2a4 4 0 0 0 4 4h3"
+                    ></path>
+                    <path
+                      d="M12 21h4a4 4 0 0 0 4-4v-3h-8v-2h7a3 3 0 0 0 3-3V7a4 4 0 0 0-4-4h-3"
+                    ></path>
+                    <circle
+                      cx="9"
+                      cy="6.7"
+                      fill="currentColor"
+                      r=".7"
+                      stroke="none"
+                    ></circle>
+                    <circle
+                      cx="15"
+                      cy="17.3"
+                      fill="currentColor"
+                      r=".7"
+                      stroke="none"
+                    ></circle></svg
+                ></span>
+                <h3 class="skill-tile__name">Python</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><span aria-hidden="true" class="skill-tile__ae"
+                    >Ae</span
+                  ></span
+                >
+                <h3 class="skill-tile__name">After Effects</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <ellipse cx="12" cy="12" rx="9" ry="3.5"></ellipse>
+                    <ellipse
+                      cx="12"
+                      cy="12"
+                      rx="9"
+                      ry="3.5"
+                      transform="rotate(60 12 12)"
+                    ></ellipse>
+                    <ellipse
+                      cx="12"
+                      cy="12"
+                      rx="9"
+                      ry="3.5"
+                      transform="rotate(120 12 12)"
+                    ></ellipse>
+                    <circle
+                      cx="12"
+                      cy="12"
+                      fill="currentColor"
+                      r="1.4"
+                      stroke="none"
+                    ></circle></svg
+                ></span>
+                <h3 class="skill-tile__name">MERN/PERN Stack</h3>
+              </div>
+              <div class="skill-tile">
+                <span class="skill-tile__icon"
+                  ><svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewbox="0 0 24 24"
+                  >
+                    <circle cx="7" cy="5" r="2"></circle>
+                    <circle cx="7" cy="19" r="2"></circle>
+                    <circle cx="17" cy="12" r="2"></circle>
+                    <path d="M7 7v10M7 10a4 4 0 0 0 4 4h4"></path></svg
+                ></span>
+                <h3 class="skill-tile__name">Git</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--==================== Qualifications ==================-->
+      <section
+        class="qualification__section service__section"
+        id="qualification"
+      >
+        <h2 class="section__title">Qualification</h2>
+        <span class="section__subtitle">My personal journey</span>
+        <div
+          class="qualification__container container grid services__container"
+        >
+          <div class="qualification__tabs">
+            <div
+              class="qualification__button button--flex qualification__active"
+              data-target="#education"
+            >
+              <i class="uil uil-graduation-cap qualification__icon"></i>
 
-            <!--==================== Skill 2 =================-->
-            <div class="skills__content skills__close">
-              <div class="skills__header">
-                <i class="fas fa-code skills__icon"></i>
-
+              Education
+            </div>
+          </div>
+          <div class="qualification__sections">
+            <!--====== Qualification Content 1 ======-->
+            <div
+              class="qualification__content qualifiation__active services__content"
+              data-content=""
+              id="education"
+            >
+              <!--====== Qualification 1 ======-->
+              <div class="qualification__data">
                 <div>
-                  <h1 class="skills__title">IT Constructs</h1>
-                </div>
+                  <h3 class="qualification__title">Matriculation</h3>
+                  <span class="qualification__subtitle"
+                    >TCF<br />Computer Science</span
+                  >
+                  <div class="qualification__calender">
+                    <i class="uil uil-calendar-alt"></i>
 
-                <i class="uil uil-angle-down skills__arrow"></i>
-              </div>
-
-              <div class="skills__list grid">
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">DBMS</h3>
+                    - 2020
                   </div>
+                  <span
+                    class="button button--flex button--small button--link services__button"
+                  >
+                    View More
 
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">DS & Algorithms</h3>
+                    <i class="uil uil-arrow-right button__icon"></i>
+                  </span>
+                  <div class="services__modal">
+                    <div class="services__modal-content">
+                      <h4 class="services__modal-title">
+                        Class 10th Summary :
+                      </h4>
+                      <i class="uil uil-times services__modal-close"></i>
+                      <ul class="services__modal-services grid">
+                        <li class="services__modal-service">
+                          <i
+                            class="uil uil-check-circle services__moda-icon"
+                          ></i>
+                          <p>
+                            Subjects studied: Science, Maths, English, Social
+                            Studies,Physics,Urdu,Computer.
+                          </p>
+                        </li>
+                        <li class="services__modal-service">
+                          <i
+                            class="uil uil-check-circle services__moda-icon"
+                          ></i>
+                          <p>Scored 75%</p>
+                        </li>
+                        <li class="services__modal-service">
+                          <i
+                            class="uil uil-check-circle services__moda-icon"
+                          ></i>
+                          <p>Came runners up in school race</p>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-
                 </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">OOP</h3>
-                  </div>
-
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">OS</h3>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <!--==================== Skill 3 =================-->
-            <div class="skills__content skills__close">
-              <div class="skills__header">
-                <i class="fas fa-swatchbook skills__icon"></i>
                 <div>
-                  <h1 class="skills__title">Technologies</h1>
-                </div>
-
-                <i class="uil uil-angle-down skills__arrow"></i>
-              </div>
-
-              <div class="skills__list grid">
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">MERN/PERN Stack Development</h3>
-                  </div>
-
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">Shopify Development</h3>
-                  </div>
-
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">Graphic Designing</h3>
-                  </div>
-
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">
-                  </div>
-
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name">
-                  </div>
-
-                </div>
-
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name"></h3>
-                  </div>
-
-                </div>
-                <div class="skills__data">
-                  <div class="skills__titles">
-                    <h3 class="skills__name"></h3>
-                  </div>
-
+                  <span class="qualification__rounder"></span>
+                  <span class="qualification__line"></span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-    </section>
-
-    <!--==================== Qualifications ==================-->
-
-    <section class="qualification__section service__section" id="qualification">
-      <h2 class="section__title">Qualification</h2>
-      <span class="section__subtitle">My personal journey</span>
-
-      <div class="qualification__container container grid services__container">
-        <div class="qualification__tabs">
-          <div class="qualification__button button--flex qualification__active" data-target="#education">
-            <i class="uil uil-graduation-cap qualification__icon"></i>
-            Education
-          </div>
-        </div>
-
-        <div class="qualification__sections">
-          <!--====== Qualification Content 1 ======-->
-          <div class="qualification__content qualifiation__active services__content" data-content id="education">
-            <!--====== Qualification 1 ======-->
-            <div class="qualification__data">
-              <div>
-                <h3 class="qualification__title">Matriculation </h3>
-                <span class="qualification__subtitle">TCF<br />Computer Science</span>
-                <div class="qualification__calender">
-                  <i class="uil uil-calendar-alt"></i>
-                  - 2020
+              <!--====== Qualification 2 ======-->
+              <div class="qualification__data">
+                <div></div>
+                <div>
+                  <span class="qualification__rounder"></span>
+                  <span class="qualification__line"></span>
                 </div>
-                <span class="button button--flex button--small button--link services__button">
-                  View More
-                  <i class="uil uil-arrow-right button__icon"></i>
-                </span>
-                <div class="services__modal">
-                  <div class="services__modal-content">
-                    <h4 class="services__modal-title">
-                      Class 10th Summary :
-                    </h4>
-                    <i class="uil uil-times services__modal-close"></i>
-                    <ul class="services__modal-services grid">
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__moda-icon"></i>
-                        <p>
-                          Subjects studied: Science, Maths, English,
-                          Social Studies,Physics,Urdu,Computer.
-                        </p>
-                      </li>
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__moda-icon"></i>
-                        <p>Scored 75%</p>
-                      </li>
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__moda-icon"></i>
-                        <p>Came runners up in school race</p>
-                      </li>
-                    </ul>
+                <div>
+                  <h3 class="qualification__title">Class 12th</h3>
+                  <span class="qualification__subtitle"
+                    >TCF College <br />Pre Engineering</span
+                  >
+                  <div class="qualification__calender">
+                    <i class="uil uil-calendar-alt"></i>
+
+                    - 2022
+                  </div>
+                  <span
+                    class="button button--flex button--small button--link services__button"
+                  >
+                    View More
+
+                    <i class="uil uil-arrow-right button__icon"></i>
+                  </span>
+                  <div class="services__modal">
+                    <div class="services__modal-content">
+                      <h4 class="services__modal-title">
+                        Class 12th Summary :
+                      </h4>
+                      <i class="uil uil-times services__modal-close"></i>
+                      <ul class="services__modal-services grid">
+                        <li class="services__modal-service">
+                          <i
+                            class="uil uil-check-circle services__moda-icon"
+                          ></i>
+                          <p>
+                            Subjects studied: Physics, Chemistry, Maths,
+                            English, Islamiyat , Pak Studies.
+                          </p>
+                        </li>
+                        <li class="services__modal-service">
+                          <i
+                            class="uil uil-check-circle services__moda-icon"
+                          ></i>
+                          <p>Scored 80%</p>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
+              <!--====== Qualification 3 ======-->
+              <div class="qualification__data">
+                <div>
+                  <h3 class="qualification__title">University</h3>
+                  <span class="qualification__subtitle"
+                    >SZABIST University, Karachi</span
+                  >
+                  <div class="qualification__calender">
+                    <i class="uil uil-calendar-alt"></i>
 
-              <div>
-                <span class="qualification__rounder"></span>
-                <span class="qualification__line"></span>
-              </div>
-            </div>
-
-            <!--====== Qualification 2 ======-->
-            <div class="qualification__data">
-              <div></div>
-
-              <div>
-                <span class="qualification__rounder"></span>
-                <span class="qualification__line"></span>
-              </div>
-              <div>
-                <h3 class="qualification__title">Class 12th</h3>
-                <span class="qualification__subtitle">TCF College <br />Pre Engineering</span>
-                <div class="qualification__calender">
-                  <i class="uil uil-calendar-alt"></i>
-                  - 2022
-                </div>
-                <span class="button button--flex button--small button--link services__button">
-                  View More
-                  <i class="uil uil-arrow-right button__icon"></i>
-                </span>
-                <div class="services__modal">
-                  <div class="services__modal-content">
-                    <h4 class="services__modal-title">
-                      Class 12th Summary :
-                    </h4>
-                    <i class="uil uil-times services__modal-close"></i>
-                    <ul class="services__modal-services grid">
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__moda-icon"></i>
-                        <p>
-                          Subjects studied: Physics, Chemistry, Maths,
-                          English, Islamiyat , Pak Studies.
-                        </p>
-                      </li>
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__moda-icon"></i>
-                        <p>Scored 80%</p>
-                      </li>
-                    </ul>
+                    2022 - 2026
                   </div>
-                </div>
-              </div>
-            </div>
+                  <span
+                    class="button button--flex button--small button--link services__button"
+                  >
+                    View More
 
-            <!--====== Qualification 3 ======-->
-            <div class="qualification__data">
-              <div>
-                <h3 class="qualification__title">University</h3>
-                <span class="qualification__subtitle">SZABIST University, Karachi</span>
-                <div class="qualification__calender">
-                  <i class="uil uil-calendar-alt"></i>
-                  2022 - 2026
-                </div>
-                <span class="button button--flex button--small button--link services__button">
-                  View More
-                  <i class="uil uil-arrow-right button__icon"></i>
-                </span>
-                <div class="services__modal">
-                  <div class="services__modal-content">
-                    <h4 class="services__modal-title">University Summary :</h4>
-                    <i class="uil uil-times services__modal-close"></i>
-                    <ul class="services__modal-services grid">
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__modal-icon"></i>
-                        <p>
-                          Studying core subjects of CS including DSA, Embedded
-                          systems, Design analysis and algorithm, Operating
-                          systems, OOP , OS .
-                        </p>
-                      </li>
-                      <li class="services__modal-service">
-                        <i class="uil uil-check-circle services__modal-icon"></i>
-                        <p>Scored an aggregate of 3.2 CGPA till now.</p>
-                      </li>
-                      <!-- <li class="services__modal-service">
+                    <i class="uil uil-arrow-right button__icon"></i>
+                  </span>
+                  <div class="services__modal">
+                    <div class="services__modal-content">
+                      <h4 class="services__modal-title">
+                        University Summary :
+                      </h4>
+                      <i class="uil uil-times services__modal-close"></i>
+                      <ul class="services__modal-services grid">
+                        <li class="services__modal-service">
                           <i
                             class="uil uil-check-circle services__modal-icon"
                           ></i>
                           <p>
-                            Student coordinator in media and
-                            publication club of the college.
+                            Studying core subjects of CS including DSA, Embedded
+                            systems, Design analysis and algorithm, Operating
+                            systems, OOP , OS .
                           </p>
+                        </li>
+                        <li class="services__modal-service">
+                          <i
+                            class="uil uil-check-circle services__modal-icon"
+                          ></i>
+                          <p>Scored an aggregate of 3.2 CGPA till now.</p>
+                        </li>
+                        <!-- <li class="services__modal-service">
+
+
+
+                          <i
+
+
+
+                            class="uil uil-check-circle services__modal-icon"
+
+
+
+                          ></i>
+
+
+
+                          <p>
+
+
+
+                            Student coordinator in media and
+
+
+
+                            publication club of the college.
+
+
+
+                          </p>
+
+
+
                         </li> -->
-
-
-                    </ul>
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div>
-                <span class="qualification__rounder"></span>
-                <!--<span class="qualification__line"></span>-->
+                <div>
+                  <span class="qualification__rounder"></span>
+                  <!--<span class="qualification__line"></span>-->
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!--=================== Portfolio ===================-->
-    <section class="portfolio section" id="portfolio">
-      <h2 class="section__title">Projects</h2>
-      <span class="section__subtitle">Most recent work</span>
-
-      <div class="portfolio__container container swiper-container">
-        <div class="swiper-wrapper">
-          <!-- ------------------------portfollio 1-------------------- -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/MKMC.png" class="portfolio__img" />
-
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">
-                Mehmoud Khan Medical Center(FYP Project)
+      </section>
+      <!--=================== Portfolio ===================-->
+      <section class="portfolio section" id="portfolio">
+        <h2 class="section__title">Projects</h2>
+        <span class="section__subtitle">Most recent work</span>
+        <div
+          aria-label="Development projects"
+          class="container project-cards-grid"
+        >
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Mehmoud Khan Medical Center(FYP Project)"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/MKMC.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">
+                Mehmoud Khan Medical Center (FYP)
               </h3>
-              <p class="portfolio__description">
-                Intelligent Healthcare Infrastructure: A robust hospital management platform built with the PERN stack
-                (PostgreSQL, Express, React, Node.js), featuring a custom rules-engine to automate patient triage and
-                clinical workflow prioritization.
-                Scalable Data Governance: Leveraged Prisma ORM and PostgreSQL to architect a secure, high-concurrency
-                database capable of managing sensitive patient records, diagnostic history, and real-time bed
-                availability with ACID compliance.
-                Operational Efficiency & UX: Engineered a high-speed React interface integrated with a custom Node.js
-                API, reducing administrative overhead by streamlining the appointment scheduling and billing cycles for
-                medical staff and patients alike.</p>
-
-              <a href="https://mkmc-vercal-testing-fyp-1.vercel.app/"
-                class="button button--flex button--small portfolio__button">
+              <ul class="project-card__highlights">
+                <li>Full-stack hospital management system using PERN.</li>
+                <li>PostgreSQL and Prisma for patient and staff data.</li>
+                <li>Appointments, lab workflows, and billing modules.</li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://mkmc-vercal-testing-fyp-1.vercel.app/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 See Live
+
                 <i class="uil uil-external-link-alt button__icon"></i>
               </a>
             </div>
           </div>
-          <!-- ------------------------portfollio 2-------------------- -->
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="ShopifyScale Agency Platform"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/Agency.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">ShopifyScale Agency Platform</h3>
+              <ul class="project-card__highlights">
+                <li>Responsive website for a Shopify-focused agency.</li>
+                <li>Showcases development and marketing services.</li>
+                <li>Clear navigation and client inquiry experience.</li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://shopifyscale-iota.vercel.app/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
 
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/Agency.png" class="portfolio__img" />
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Restaurent Website"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/retaurent.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Restaurant Website</h3>
+              <ul class="project-card__highlights">
+                <li>
+                  Responsive restaurant website with a modern visual design.
+                </li>
+                <li>Menu presentation and reservation-focused layout.</li>
+                <li>Mobile-friendly navigation and user experience.</li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://restaurent-ten.vercel.app/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
 
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">
-                ShopifyScale Agency Platform
-              </h3>
-              <p class="portfolio__description">
-                A high-performance business platform for a Shopify-focused development and marketing agency. The
-                application serves as the primary touchpoint for prospective merchants, streamlining the intake process
-                and showcasing the agency's expertise in scaling e-commerce brands through custom development and
-                strategic marketing.
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Jaansreloved E-commerce"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/jaansreloved.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Jaans Reloved E-commerce</h3>
+              <ul class="project-card__highlights">
+                <li>Shopify storefront for preloved fashion.</li>
+                <li>Organized collections and product filtering.</li>
+                <li>Responsive shopping experience for all devices.</li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://jaansreloved.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
+
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="JaansUsedClothingTraders"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/JaansUsedClothingTraders.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Jaans Used Clothing Traders</h3>
+              <ul class="project-card__highlights">
+                <li>Responsive website for a used-clothing wholesaler.</li>
+                <li>Showcases sorted clothing bales and categories.</li>
+                <li>
+                  Clean interface, easy navigation, and Vercel deployment.
+                </li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://jaans-bale-boutique.vercel.app/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
+
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--=================== Shopify Stores ===================-->
+      <section class="portfolio section" id="shopify-stores">
+        <h2 class="section__title">Shopify Stores</h2>
+        <span class="section__subtitle">My e-commerce builds</span>
+        <div
+          aria-label="Shopify store projects"
+          class="container project-cards-grid"
+        >
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Jaan’s Re:Loved"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/jaansreloved.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Jaan’s Re:Loved</h3>
+              <p class="project-card__description">
+                A modern e-commerce platform specializing in pre-loved items.
+                Features a clean, accessible layout designed to highlight
+                quality second-hand goods.
               </p>
-
-              <a href="https://shopifyscale-iota.vercel.app/"
-                class="button button--flex button--small portfolio__button">
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://jaansreloved.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 See Live
+
                 <i class="uil uil-external-link-alt button__icon"></i>
               </a>
             </div>
           </div>
-
-          <!-- ------------------------portfollio 3-------------------- -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/retaurent.png" class="portfolio__img" />
-
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Restaurent Website</h3>
-              <p class="portfolio__description">
-                Custom Agency Hub: A specialized platform built with the PERN stack (PostgreSQL, Express, React,
-                Node.js) designed to bridge the gap between Shopify merchants and professional development/marketing
-                services.Scalable Data Architecture: Leveraged Prisma ORM and PostgreSQL to build a high-performance
-                backend,
-                ensuring secure and efficient management of client leads and service inquiries.Optimized User
-                Experience: Integrated a custom Node.js API with a React-based frontend to deliver a
-                seamless, high-speed interface that reflects the agency’s technical expertise in e-commerce
-                optimization.
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Zea Naturals"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/zeenaturals.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Zea Naturals</h3>
+              <p class="project-card__description">
+                A beautifully crafted natural products store offering an
+                intuitive shopping experience with earthy aesthetics and
+                seamless checkout.
               </p>
-              <a href="https://restaurent-ten.vercel.app/" class="button button--flex button--small portfolio__button">
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://www.zeanaturals.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 See Live
+
                 <i class="uil uil-external-link-alt button__icon"></i>
               </a>
             </div>
           </div>
-          <!-- ------------------------portfollio 4-------------------- -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/jaansreloved.png" class="portfolio__img" />
-
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Jaansreloved E-commerce</h3>
-              <p class="portfolio__description">
-                JaansReloved is a fully functional Shopify-based eCommerce store specializing in affordable pre-loved
-                fashion
-                for men, women, and kids. The platform features categorized collections,
-                product filtering, and a seamless shopping experience, offering high-quality branded
-                clothing at discounted prices with nationwide delivery across Pakistan.
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Magic Brush Official"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/magicbrush.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Magic Brush Official</h3>
+              <p class="project-card__description">
+                A vibrant and engaging storefront designed for creative
+                products, optimized for high conversion rates and visual appeal.
               </p>
-
-              <a href="https://jaansreloved.com/" class="button button--flex button--small portfolio__button">
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://magicbrushofficial.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 See Live
+
                 <i class="uil uil-external-link-alt button__icon"></i>
               </a>
             </div>
           </div>
-
-          <!-- ------------------------portfollio 5-------------------- -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/JaansUsedClothingTraders.png" class="portfolio__img" />
-
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">JaansUsedClothingTraders</h3>
-              <p class="portfolio__description">
-                A modern and visually appealing fashion e-commerce website designed to showcase boutique-style
-                collections with a premium user experience. Built and deployed using Vercel, the platform focuses on
-                fast performance, clean UI, and smooth navigation.
-                The website features a structured product catalog, elegant product display sections, and a responsive
-                design optimized for all devices. Emphasis was placed on minimal aesthetics, high-quality visuals, and
-                intuitive user flows to enhance customer engagement and conversion.
-                This project highlights my ability to create scalable front-end architectures, design user-centric
-                interfaces, and deliver production-ready web applications with optimized performance and seamless
-                deployment.</p>
-
-              <a href="https://jaans-bale-boutique.vercel.app/"
-                class="button button--flex button--small portfolio__button">
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="At Accommodate"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/ataccommodate.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">At Accommodate</h3>
+              <p class="project-card__description">
+                A sleek, professional interface built to provide accommodation
+                solutions and streamline the booking and inquiry process.
+              </p>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://www.ataccommodate.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 See Live
+
                 <i class="uil uil-external-link-alt button__icon"></i>
               </a>
             </div>
           </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Got Predict"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/gotpredict.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Got Predict</h3>
+              <p class="project-card__description">
+                A responsive and dynamic e-commerce platform built to showcase
+                predictive products, with a focus on quick navigation and
+                reliability.
+              </p>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://www.gotpredict.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
 
-          <!-- ------------------------portfollio 5-------------------- -->
-          <!-- <div class="portfolio__content grid swiper-slide">
-              <img src="assets/img/portfolio4.png" class="portfolio__img" />
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="Cafeteria M"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/cafeteriam.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Cafeteria M</h3>
+              <p class="project-card__description">
+                An appetizing online ordering system and storefront for a
+                cafeteria, tailored to provide a smooth and fast customer
+                journey.
+              </p>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://www.cafeteriam.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
 
-              <div class="portfolio__data">
-                <h3 class="portfolio__title">Sorting Visualizer</h3>
-                <p class="portfolio__description">
-                  Sorting Visualizer is a Java-based project that allows users
-                  to visualize various sorting algorithms in action using a
-                  Graphical User Interface (GUI). It provides an interactive and
-                  educational way to understand how different sorting algorithms
-                  work by visually demonstrating their step-by-step sorting
-                  process.
-                </p>
-                <a
-                  href="https://github.com/Venkateeshh/Sorting-Visualizer"
-                  class="button button--flex button--small portfolio__button"
-                >
-                  GitHub Repository
-                  <i class="uil uil-external-link-alt button__icon"></i>
-                </a>
-                <a
-                  href="https://www.linkedin.com/posts/venkatesh-kamath-_algorithmdesign-sortingvisualizer-javaprojects-activity-7095437035125043200-fWDl?utm_source=share&utm_medium=member_desktop"
-                  class="button button--flex button--small portfolio__button"
-                >
-                  See Live
-                  <i class="uil uil-external-link-alt button__icon"></i>
-                </a>
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--=================== Video Editing / Reels ===================-->
+      <section class="reels section" id="reels">
+        <h2 class="section__title">Video Editing &amp; Reels</h2>
+        <span class="section__subtitle">Selected creative work</span>
+        <div
+          aria-label="Video reel showcase; hover to pause and preview"
+          class="reels__shell"
+        >
+          <div class="reels__track">
+            <!-- Replace only the MP4 sources; thumbnails come from each video automatically. -->
+            <article
+              aria-label="Preview commercial video edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-1.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Commercial Edit</span>
+                <h3>Brand Storytelling</h3>
               </div>
-            </div> -->
-        </div>
-
-        <!-- add arrows -->
-        <div class="swiper-button-next">
-          <i class="uil uil-angle-right-b swiper-portfolio-icon"></i>
-        </div>
-        <div class="swiper-button-prev">
-          <i class="uil uil-angle-left-b swiper-portfolio-icon"></i>
-        </div>
-        <!-- add pagination -->
-        <div class="swiper-pagination"></div>
-      </div>
-    </section>
-
-    <!--=================== Shopify Stores ===================-->
-    <section class="portfolio section" id="shopify-stores">
-      <h2 class="section__title">Shopify Stores</h2>
-      <span class="section__subtitle">My e-commerce builds</span>
-
-      <div class="shopify__container container swiper-container">
-        <div class="swiper-wrapper">
-          <!-- Store 1 -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/jaansreloved.png" class="portfolio__img" />
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Jaan’s Re:Loved</h3>
-              <p class="portfolio__description">
-                A modern e-commerce platform specializing in pre-loved items. Features a clean, accessible layout
-                designed to highlight quality second-hand goods.
-              </p>
-              <a href="https://jaansreloved.com/" target="_blank"
-                class="button button--flex button--small portfolio__button">
-                See Live
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <!-- Store 2 -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/zeenaturals.png" class="portfolio__img" />
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Zea Naturals</h3>
-              <p class="portfolio__description">
-                A beautifully crafted natural products store offering an intuitive shopping experience with earthy
-                aesthetics and seamless checkout.
-              </p>
-              <a href="https://www.zeanaturals.com/" target="_blank"
-                class="button button--flex button--small portfolio__button">
-                See Live
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <!-- Store 3 -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/magicbrush.png" class="portfolio__img" />
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Magic Brush Official</h3>
-              <p class="portfolio__description">
-                A vibrant and engaging storefront designed for creative products, optimized for high conversion rates
-                and visual appeal.
-              </p>
-              <a href="https://magicbrushofficial.com/" target="_blank"
-                class="button button--flex button--small portfolio__button">
-                See Live
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <!-- Store 4 -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/ataccommodate.png" class="portfolio__img" />
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">At Accommodate</h3>
-              <p class="portfolio__description">
-                A sleek, professional interface built to provide accommodation solutions and streamline the booking and
-                inquiry process.
-              </p>
-              <a href="https://www.ataccommodate.com/" target="_blank"
-                class="button button--flex button--small portfolio__button">
-                See Live
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <!-- Store 5 -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/gotpredict.png" class="portfolio__img" />
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Got Predict</h3>
-              <p class="portfolio__description">
-                A responsive and dynamic e-commerce platform built to showcase predictive products, with a focus on
-                quick navigation and reliability.
-              </p>
-              <a href="https://www.gotpredict.com/" target="_blank"
-                class="button button--flex button--small portfolio__button">
-                See Live
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <!-- Store 6 -->
-          <div class="portfolio__content grid swiper-slide">
-            <img src="assets/img/cafeteriam.png" class="portfolio__img" />
-            <div class="portfolio__data">
-              <h3 class="portfolio__title">Cafeteria M</h3>
-              <p class="portfolio__description">
-                An appetizing online ordering system and storefront for a cafeteria, tailored to provide a smooth and
-                fast customer journey.
-              </p>
-              <a href="https://www.cafeteriam.com/" target="_blank"
-                class="button button--flex button--small portfolio__button">
-                See Live
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- add arrows -->
-        <div class="swiper-button-next">
-          <i class="uil uil-angle-right-b swiper-portfolio-icon"></i>
-        </div>
-        <div class="swiper-button-prev">
-          <i class="uil uil-angle-left-b swiper-portfolio-icon"></i>
-        </div>
-        <!-- add pagination -->
-        <div class="swiper-pagination"></div>
-      </div>
-    </section>
-
-    <!--===================== Contact Me =====================-->
-    <section class="contact section" id="contact">
-      <h2 class="section__title">Contact Me</h2>
-      <span class="section__subtitle">Get in touch</span>
-
-      <div class="contact__container container grid">
-        <div>
-          <div class="contact__information">
-            <i class="uil uil-calling contact__icon"></i>
-
-            <div>
-              <h3 class="contact__title">Contact Me</h3>
-              <span class="contact__subtitle"><a href="tel:6362243314"></a>03132304749</span>
-            </div>
-          </div>
-
-          <div class="contact__information">
-            <i class="uil uil-envelope-minus contact__icon"></i>
-
-            <div>
-              <h3 class="contact__title">Email</h3>
-              <span class="contact__subtitle">nk.102030g@gmail.com</span>
-            </div>
-          </div>
-
-          <div class="contact__information">
-            <i class="uil uil-map-marker contact__icon"></i>
-
-            <div>
-              <h3 class="contact__title">Location</h3>
-              <span class="contact__subtitle">Karachi,pakistan</span>
-            </div>
+            </article>
+            <article
+              aria-label="Preview motion graphics edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-2.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Motion Graphics</span>
+                <h3>Animated Captions</h3>
+              </div>
+            </article>
+            <article
+              aria-label="Preview AI UGC edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-3.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Motion Graphics</span>
+                <h3>Youtube Short</h3>
+              </div>
+            </article>
+            <article
+              aria-label="Preview social media reel"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-4.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Social Media</span>
+                <h3>Short-Form Reel</h3>
+              </div>
+            </article>
+            <article
+              aria-label="Preview AI UGC edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-5.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Motion Graphics</span>
+                <h3>Youtube Short</h3>
+              </div>
+            </article>
+            <article
+              aria-label="Preview AI UGC edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-6.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Motion Graphics</span>
+                <h3>Product editing</h3>
+              </div>
+            </article>
+            <article
+              aria-label="Preview AI UGC edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-7.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Motion Graphics</span>
+                <h3>Logo Animation</h3>
+              </div>
+            </article>
+            <article
+              aria-label="Preview AI UGC edit"
+              class="reel__card"
+              tabindex="0"
+            >
+              <video
+                class="reel__video"
+                loop=""
+                muted=""
+                playsinline=""
+                preload="metadata"
+              >
+                <source src="assets/videos/reel-8.mp4" type="video/mp4" />
+              </video>
+              <span aria-hidden="true" class="reel__play"
+                ><i class="uil uil-play"></i
+              ></span>
+              <div class="reel__info">
+                <span class="reel__category">Motion Graphics</span>
+                <h3>Caption editing</h3>
+              </div>
+            </article>
           </div>
         </div>
-
-        <form action="https://formsubmit.co/nk.102030g@gmail.com" method="POST" class="contact__form grid">
-          <div class="contact__inputs grid">
-            <div class="contact__content">
-              <label for="name" class="content__label">Name</label>
-              <input type="text" name="name" id="name" class="contact__input" required />
-            </div>
-
-            <div class="contact__content">
-              <label for="email" class="content__label">Email</label>
-              <input type="email" name="email" id="email" class="contact__input" required />
-            </div>
-          </div>
-
-          <div class="contact__content">
-            <label for="message" class="content__label">Message</label>
-            <textarea name="message" id="message" cols="0" rows="7" class="contact__input" required></textarea>
-          </div>
-
+      </section>
+      <!--===================== Contact Me =====================-->
+      <section class="contact section" id="contact">
+        <h2 class="section__title">Contact Me</h2>
+        <span class="section__subtitle">Get in touch</span>
+        <div class="contact__container container grid">
           <div>
-            <button type="submit" class="button button--flex"
-              style="border: none; font-family: inherit; cursor: pointer;">
-              Send Message
-              <i class="uil uil-message button__icon"></i>
-            </button>
+            <div class="contact__information">
+              <i class="uil uil-calling contact__icon"></i>
+              <div>
+                <h3 class="contact__title">Contact Me</h3>
+                <span class="contact__subtitle"
+                  ><a href="tel:6362243314"></a>03132304749</span
+                >
+              </div>
+            </div>
+            <div class="contact__information">
+              <i class="uil uil-envelope-minus contact__icon"></i>
+              <div>
+                <h3 class="contact__title">Email</h3>
+                <span class="contact__subtitle">nk.102030g@gmail.com</span>
+              </div>
+            </div>
+            <div class="contact__information">
+              <i class="uil uil-map-marker contact__icon"></i>
+              <div>
+                <h3 class="contact__title">Location</h3>
+                <span class="contact__subtitle">Karachi,pakistan</span>
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
-    </section>
-  </main>
+          <form
+            action="https://formsubmit.co/nk.102030g@gmail.com"
+            class="contact__form grid"
+            method="POST"
+          >
+            <div class="contact__inputs grid">
+              <div class="contact__content">
+                <label class="content__label" for="name">Name</label>
+                <input
+                  class="contact__input"
+                  id="name"
+                  name="name"
+                  required=""
+                  type="text"
+                />
+              </div>
+              <div class="contact__content">
+                <label class="content__label" for="email">Email</label>
+                <input
+                  class="contact__input"
+                  id="email"
+                  name="email"
+                  required=""
+                  type="email"
+                />
+              </div>
+            </div>
+            <div class="contact__content">
+              <label class="content__label" for="message">Message</label>
+              <textarea
+                class="contact__input"
+                cols="0"
+                id="message"
+                name="message"
+                required=""
+                rows="7"
+              ></textarea>
+            </div>
+            <div>
+              <button
+                class="button button--flex"
+                style="border: none; font-family: inherit; cursor: pointer"
+                type="submit"
+              >
+                Send Message
 
-  <!--================== Footer ===============-->
-  <footer class="footer">
-    <div class="footer__bg">
-      <div class="footer__container container grid">
-        <div>
-          <h1 class="footer__title">Nasir Khan</h1>
-          <span class="footer__subtitle">Computer Science Science Engineering Student</span>
+                <i class="uil uil-message button__icon"></i>
+              </button>
+            </div>
+          </form>
         </div>
+      </section>
+    </main>
+    <!--================== Footer ===============-->
+    <footer class="footer">
+      <div class="footer__bg">
+        <div class="footer__container container grid">
+          <div>
+            <h1 class="footer__title">Nasir Khan</h1>
+            <span class="footer__subtitle"
+              >Computer Science Science Engineering Student</span
+            >
+          </div>
+          <ul class="footer__links">
+            <li>
+              <a class="footer__link" href="#qualification">Qualification</a>
+            </li>
+            <li>
+              <a class="footer__link" href="#portfolio">Portfolio</a>
+            </li>
+            <li>
+              <a class="footer__link" href="#contact">Contact-Me</a>
+            </li>
+          </ul>
+          <!-- <div class="footer__socials">
 
-        <ul class="footer__links">
-          <li>
-            <a href="#qualification" class="footer__link">Qualification</a>
-          </li>
-          <li>
-            <a href="#portfolio" class="footer__link">Portfolio</a>
-          </li>
-          <li>
-            <a href="#contact" class="footer__link">Contact-Me</a>
-          </li>
-        </ul>
 
-        <!-- <div class="footer__socials">
+
             <a
+
+
+
               href="https://www.instagram.com/venkateeshh/"
+
+
+
               class="footer__social"
+
+
+
               target="__blank"
+
+
+
             >
+
+
+
             <i class="fa-brands fa-instagram"></i>
+
+
+
             </a>
+
+
+
+
+
+
 
             <a
+
+
+
               href="https://twitter.com/Venkateeshhh"
+
+
+
               target="__blank"
+
+
+
               class="footer__social"
+
+
+
             >
+
+
+
             <i class="fa-brands fa-x-twitter"></i>
+
+
+
             </a>
+
+
+
           </div> -->
+        </div>
+        <p class="footer__copy">© Nasir. All right reserved</p>
       </div>
+    </footer>
+    <!--================== SCROLL TOP ==================-->
+    <a class="scrollup" href="#" id="scroll-up">
+      <i class="uil uil-arrow-up scrollup__icon"></i>
+    </a>
+    <!--================== WhatsApp Floating Button ==================-->
+    <a
+      aria-label="Chat on WhatsApp"
+      class="whatsapp-btn"
+      href="https://wa.me/923132304749"
+      target="_blank"
+    >
+      <i class="uil uil-whatsapp"></i>
+    </a>
+    <script>
+      // Always begin at the top on first visit, refresh and history restoration.
 
-      <p class="footer__copy">&#169; Nasir. All right reserved</p>
-    </div>
-  </footer>
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-  <!--================== SCROLL TOP ==================-->
-  <a href="#" class="scrollup" id="scroll-up">
-    <i class="uil uil-arrow-up scrollup__icon"></i>
-  </a>
+      const scrollToPortfolioTop = () =>
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
-  <!--================== WhatsApp Floating Button ==================-->
-  <a href="https://wa.me/923132304749" class="whatsapp-btn" target="_blank" aria-label="Chat on WhatsApp">
-    <i class="uil uil-whatsapp"></i>
-  </a>
+      window.addEventListener("load", scrollToPortfolioTop);
 
-  <script type="text/javascript" src="assets/swiper-bundle.min.js"></script>
-  <script src="https://kit.fontawesome.com/2205d59d52.js" crossorigin="anonymous"></script>
-  <script src="assets/ptj.js"></script>
-</body>
+      window.addEventListener("pageshow", () => {
+        scrollToPortfolioTop();
+        requestAnimationFrame(scrollToPortfolioTop);
+      });
+    </script>
+    <script src="assets/swiper-bundle.min.js" type="text/javascript"></script>
+    <script
+      crossorigin="anonymous"
+      src="https://kit.fontawesome.com/2205d59d52.js"
+    ></script>
+    <script src="assets/ptj.js"></script>
+    <script>
+      (() => {
+        const shell = document.querySelector(".reels__shell");
 
+        const track = document.querySelector(".reels__track");
+
+        if (!shell || !track) return;
+
+        const originals = Array.from(track.querySelectorAll(".reel__card")).map(
+          (card) => card.cloneNode(true),
+        );
+
+        if (!originals.length) return;
+
+        const reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        );
+
+        const hoverDevice = window.matchMedia(
+          "(hover: hover) and (pointer: fine)",
+        ).matches;
+
+        let span = 1,
+          offset = 0,
+          lastTime = 0,
+          paused = false;
+
+        let playing = null;
+
+        function stop(card) {
+          if (!card) return;
+
+          const video = card.querySelector("video");
+
+          video.pause();
+
+          if (video.readyState >= 1 && video.duration > 0.1)
+            video.currentTime = 0.1;
+
+          card.classList.remove("is-playing");
+
+          if (playing === card) playing = null;
+        }
+
+        async function play(card) {
+          if (playing && playing !== card) stop(playing);
+
+          playing = card;
+
+          const video = card.querySelector("video");
+
+          try {
+            await video.play();
+
+            if (playing === card) card.classList.add("is-playing");
+            else video.pause();
+          } catch (_) {
+            card.classList.remove("is-playing");
+          }
+        }
+
+        function prepareCard(card) {
+          const video = card.querySelector("video");
+
+          video.addEventListener("loadedmetadata", () => {
+            if (video.paused && video.duration > 0.1) video.currentTime = 0.1;
+          });
+
+          // The video element itself displays the thumbnail: no JPG needed.
+
+          video.load();
+
+          card.addEventListener("focusin", () => {
+            paused = true;
+            play(card);
+          });
+
+          card.addEventListener("focusout", () => {
+            stop(card);
+            paused = false;
+          });
+
+          card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+
+              video.paused ? play(card) : stop(card);
+            }
+          });
+
+          if (!hoverDevice) {
+            card.addEventListener("click", () =>
+              video.paused ? play(card) : stop(card),
+            );
+          }
+        }
+
+        function rebuild() {
+          if (playing) stop(playing);
+
+          track.replaceChildren();
+
+          // Make the first sequence wider than the screen; then duplicate
+
+          // it exactly, so cycling back to the start is invisible.
+
+          let count = 0;
+
+          do {
+            originals.forEach((template) => {
+              const card = template.cloneNode(true);
+
+              prepareCard(card);
+
+              track.appendChild(card);
+            });
+
+            count += originals.length;
+          } while (track.scrollWidth < shell.clientWidth + 200 && count < 100);
+
+          const sequence = Array.from(track.children);
+
+          // Width of one full sequence includes the inter-sequence gap.
+
+          const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+
+          span = track.scrollWidth + gap;
+
+          sequence.forEach((card) => {
+            const copy = card.cloneNode(true);
+
+            copy.setAttribute("aria-hidden", "true");
+
+            copy.removeAttribute("tabindex");
+
+            prepareCard(copy);
+
+            track.appendChild(copy);
+          });
+
+          offset = offset % span;
+
+          track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+        }
+
+        shell.addEventListener("pointerenter", () => {
+          paused = true;
+        });
+
+        shell.addEventListener("pointerleave", () => {
+          paused = false;
+          stop(playing);
+        });
+
+        if (hoverDevice) {
+          track.addEventListener("pointerover", (e) => {
+            const card = e.target.closest(".reel__card");
+
+            if (card && !card.contains(e.relatedTarget)) play(card);
+          });
+
+          track.addEventListener("pointerout", (e) => {
+            const card = e.target.closest(".reel__card");
+
+            if (card && !card.contains(e.relatedTarget)) stop(card);
+          });
+        }
+
+        function animate(time) {
+          const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0;
+
+          lastTime = time;
+
+          if (
+            !paused &&
+            !document.hidden &&
+            !reduceMotion.matches &&
+            span > 0
+          ) {
+            offset = (offset + dt * 36) % span; // 36 pixels per second, right to left
+
+            track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+          }
+
+          requestAnimationFrame(animate);
+        }
+
+        let resizeTimer;
+
+        window.addEventListener("resize", () => {
+          clearTimeout(resizeTimer);
+
+          resizeTimer = setTimeout(rebuild, 180);
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) stop(playing);
+        });
+
+        rebuild();
+
+        requestAnimationFrame(animate);
+      })();
+    </script>
+  </body>
 </html>
