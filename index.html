@@ -537,6 +537,22 @@
         margin-top: auto;
       }
     </style>
+    <style>
+      /* Touch-first reel browsing: vertical page scroll remains available. */
+      @media (hover: none), (pointer: coarse) {
+        #reels .reels__shell {
+          touch-action: pan-y;
+          overscroll-behavior-x: contain;
+        }
+        #reels .reel__card {
+          -webkit-tap-highlight-color: transparent;
+        }
+        #reels .reels__track {
+          user-select: none;
+          -webkit-user-select: none;
+        }
+      }
+    </style>
   </head>
   <body oncontextmenu="return false;">
     <header class="header" id="header">
@@ -1234,6 +1250,64 @@
           <div class="project-card">
             <div class="project-card__visual">
               <img
+                alt="Jaansreloved E-commerce"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/jaansreloved.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Jaans Reloved E-commerce</h3>
+              <ul class="project-card__highlights">
+                <li>Shopify storefront for preloved fashion.</li>
+                <li>Organized collections and product filtering.</li>
+                <li>Responsive shopping experience for all devices.</li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://jaansreloved.com/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
+
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
+                alt="JaansUsedClothingTraders"
+                class="project-card__image"
+                loading="lazy"
+                src="assets/img/JaansUsedClothingTraders.png"
+              />
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Jaans Used Clothing Traders</h3>
+              <ul class="project-card__highlights">
+                <li>Responsive website for a used-clothing wholesaler.</li>
+                <li>Showcases sorted clothing bales and categories.</li>
+                <li>
+                  Clean interface, easy navigation, and Vercel deployment.
+                </li>
+              </ul>
+              <a
+                class="button button--flex button--small project-card__link"
+                href="https://jaans-bale-boutique.vercel.app/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                See Live
+
+                <i class="uil uil-external-link-alt button__icon"></i>
+              </a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card__visual">
+              <img
                 alt="Mehmoud Khan Medical Center(FYP Project)"
                 class="project-card__image"
                 loading="lazy"
@@ -1310,64 +1384,6 @@
               <a
                 class="button button--flex button--small project-card__link"
                 href="https://restaurent-ten.vercel.app/"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                See Live
-
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <div class="project-card">
-            <div class="project-card__visual">
-              <img
-                alt="Jaansreloved E-commerce"
-                class="project-card__image"
-                loading="lazy"
-                src="assets/img/jaansreloved.png"
-              />
-            </div>
-            <div class="project-card__body">
-              <h3 class="project-card__title">Jaans Reloved E-commerce</h3>
-              <ul class="project-card__highlights">
-                <li>Shopify storefront for preloved fashion.</li>
-                <li>Organized collections and product filtering.</li>
-                <li>Responsive shopping experience for all devices.</li>
-              </ul>
-              <a
-                class="button button--flex button--small project-card__link"
-                href="https://jaansreloved.com/"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                See Live
-
-                <i class="uil uil-external-link-alt button__icon"></i>
-              </a>
-            </div>
-          </div>
-          <div class="project-card">
-            <div class="project-card__visual">
-              <img
-                alt="JaansUsedClothingTraders"
-                class="project-card__image"
-                loading="lazy"
-                src="assets/img/JaansUsedClothingTraders.png"
-              />
-            </div>
-            <div class="project-card__body">
-              <h3 class="project-card__title">Jaans Used Clothing Traders</h3>
-              <ul class="project-card__highlights">
-                <li>Responsive website for a used-clothing wholesaler.</li>
-                <li>Showcases sorted clothing bales and categories.</li>
-                <li>
-                  Clean interface, easy navigation, and Vercel deployment.
-                </li>
-              </ul>
-              <a
-                class="button button--flex button--small project-card__link"
-                href="https://jaans-bale-boutique.vercel.app/"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -1952,206 +1968,235 @@
     ></script>
     <script src="assets/ptj.js"></script>
     <script>
+      // Video reels: automatic desktop marquee + touch swipe and tap playback.
       (() => {
         const shell = document.querySelector(".reels__shell");
-
         const track = document.querySelector(".reels__track");
-
         if (!shell || !track) return;
 
-        const originals = Array.from(track.querySelectorAll(".reel__card")).map(
+        const templates = [...track.querySelectorAll(".reel__card")].map(
           (card) => card.cloneNode(true),
         );
-
-        if (!originals.length) return;
+        if (!templates.length) return;
 
         const reduceMotion = window.matchMedia(
           "(prefers-reduced-motion: reduce)",
         );
-
         const hoverDevice = window.matchMedia(
           "(hover: hover) and (pointer: fine)",
         ).matches;
-
-        let span = 1,
-          offset = 0,
-          lastTime = 0,
-          paused = false;
-
+        let span = 1;
+        let offset = 0;
+        let lastTime = 0;
+        let hovered = false;
+        let dragging = false;
         let playing = null;
+        let preventTap = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchLastX = 0;
+        let horizontalGesture = false;
+
+        function setPosition() {
+          offset = ((offset % span) + span) % span;
+          track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+        }
 
         function stop(card) {
           if (!card) return;
-
           const video = card.querySelector("video");
-
+          if (!video) return;
           video.pause();
-
           if (video.readyState >= 1 && video.duration > 0.1)
             video.currentTime = 0.1;
-
           card.classList.remove("is-playing");
-
           if (playing === card) playing = null;
         }
 
         async function play(card) {
+          if (!card || dragging) return;
           if (playing && playing !== card) stop(playing);
-
-          playing = card;
-
           const video = card.querySelector("video");
-
+          if (!video) return;
+          playing = card;
           try {
             await video.play();
-
             if (playing === card) card.classList.add("is-playing");
             else video.pause();
           } catch (_) {
+            if (playing === card) playing = null;
             card.classList.remove("is-playing");
           }
         }
 
         function prepareCard(card) {
           const video = card.querySelector("video");
-
+          if (!video) return;
+          video.muted = true;
+          video.playsInline = true;
           video.addEventListener("loadedmetadata", () => {
             if (video.paused && video.duration > 0.1) video.currentTime = 0.1;
           });
+          video.load(); // First video frame is the thumbnail; no JPG required.
 
-          // The video element itself displays the thumbnail: no JPG needed.
-
-          video.load();
-
-          card.addEventListener("focusin", () => {
-            paused = true;
-            play(card);
-          });
-
-          card.addEventListener("focusout", () => {
-            stop(card);
-            paused = false;
-          });
+          if (hoverDevice) {
+            card.addEventListener("focusin", () => play(card));
+            card.addEventListener("focusout", () => stop(card));
+          } else {
+            // Tap a card to play continuously; tap it again to pause.
+            card.addEventListener("click", (event) => {
+              if (preventTap) {
+                event.preventDefault();
+                return;
+              }
+              if (playing === card && !video.paused) stop(card);
+              else play(card);
+            });
+          }
 
           card.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-
-              video.paused ? play(card) : stop(card);
-            }
+            if (e.key !== "Enter" && e.key !== " ") return;
+            e.preventDefault();
+            if (playing === card && !video.paused) stop(card);
+            else play(card);
           });
-
-          if (!hoverDevice) {
-            card.addEventListener("click", () =>
-              video.paused ? play(card) : stop(card),
-            );
-          }
         }
 
         function rebuild() {
-          if (playing) stop(playing);
-
+          stop(playing);
           track.replaceChildren();
-
-          // Make the first sequence wider than the screen; then duplicate
-
-          // it exactly, so cycling back to the start is invisible.
-
           let count = 0;
-
           do {
-            originals.forEach((template) => {
+            templates.forEach((template) => {
               const card = template.cloneNode(true);
-
               prepareCard(card);
-
               track.appendChild(card);
             });
-
-            count += originals.length;
+            count += templates.length;
           } while (track.scrollWidth < shell.clientWidth + 200 && count < 100);
 
-          const sequence = Array.from(track.children);
-
-          // Width of one full sequence includes the inter-sequence gap.
-
+          const sequence = [...track.children];
           const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-
-          span = track.scrollWidth + gap;
-
+          span = Math.max(1, track.scrollWidth + gap);
           sequence.forEach((card) => {
             const copy = card.cloneNode(true);
-
             copy.setAttribute("aria-hidden", "true");
-
             copy.removeAttribute("tabindex");
-
             prepareCard(copy);
-
             track.appendChild(copy);
           });
-
-          offset = offset % span;
-
-          track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+          setPosition();
         }
 
-        shell.addEventListener("pointerenter", () => {
-          paused = true;
-        });
-
-        shell.addEventListener("pointerleave", () => {
-          paused = false;
-          stop(playing);
-        });
-
         if (hoverDevice) {
+          shell.addEventListener("pointerenter", (e) => {
+            if (e.pointerType === "mouse") hovered = true;
+          });
+          shell.addEventListener("pointerleave", (e) => {
+            if (e.pointerType !== "mouse") return;
+            hovered = false;
+            stop(playing);
+          });
           track.addEventListener("pointerover", (e) => {
             const card = e.target.closest(".reel__card");
-
             if (card && !card.contains(e.relatedTarget)) play(card);
           });
-
           track.addEventListener("pointerout", (e) => {
             const card = e.target.closest(".reel__card");
-
             if (card && !card.contains(e.relatedTarget)) stop(card);
           });
+        } else {
+          // Touch swipe changes the marquee offset in either direction.
+          // Only a real horizontal gesture stops the playing reel.
+          shell.addEventListener(
+            "touchstart",
+            (e) => {
+              if (e.touches.length !== 1) return;
+              touchStartX = touchLastX = e.touches[0].clientX;
+              touchStartY = e.touches[0].clientY;
+              horizontalGesture = false;
+              preventTap = false;
+            },
+            { passive: true },
+          );
+
+          shell.addEventListener(
+            "touchmove",
+            (e) => {
+              if (e.touches.length !== 1) return;
+              const x = e.touches[0].clientX;
+              const y = e.touches[0].clientY;
+              const dx = x - touchStartX;
+              const dy = y - touchStartY;
+              if (!horizontalGesture) {
+                if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) return;
+                if (Math.abs(dx) < 9 || Math.abs(dx) <= Math.abs(dy)) return;
+                horizontalGesture = true;
+                dragging = true;
+                preventTap = true;
+                stop(playing);
+              }
+              // Allow the page to scroll vertically, but handle horizontal swipes ourselves.
+              if (e.cancelable) e.preventDefault();
+              offset -= x - touchLastX;
+              setPosition();
+              touchLastX = x;
+            },
+            { passive: false },
+          );
+
+          const finishSwipe = () => {
+            if (!dragging) return;
+            dragging = false;
+            horizontalGesture = false;
+            // The browser may emit a synthetic click immediately after touchend.
+            // Suppress that click, then allow a new intentional tap.
+            window.setTimeout(() => {
+              preventTap = false;
+            }, 350);
+          };
+          shell.addEventListener("touchend", finishSwipe, { passive: true });
+          shell.addEventListener("touchcancel", finishSwipe, { passive: true });
+          shell.addEventListener(
+            "click",
+            (e) => {
+              if (!preventTap) return;
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            true,
+          );
         }
 
         function animate(time) {
           const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0;
-
           lastTime = time;
-
+          // On touch devices, video keeps playing and marquee stays still until
+          // another swipe. Once swiped, video pauses and the marquee resumes.
           if (
-            !paused &&
+            !hovered &&
+            !dragging &&
+            !playing &&
             !document.hidden &&
             !reduceMotion.matches &&
             span > 0
           ) {
-            offset = (offset + dt * 36) % span; // 36 pixels per second, right to left
-
-            track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+            offset += dt * 36;
+            setPosition();
           }
-
           requestAnimationFrame(animate);
         }
 
         let resizeTimer;
-
         window.addEventListener("resize", () => {
           clearTimeout(resizeTimer);
-
           resizeTimer = setTimeout(rebuild, 180);
         });
-
         document.addEventListener("visibilitychange", () => {
           if (document.hidden) stop(playing);
         });
 
         rebuild();
-
         requestAnimationFrame(animate);
       })();
     </script>
